@@ -5,15 +5,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,13 +29,14 @@ import com.example.loto.viewModels.LoteriaViewModel
 @Composable
 fun LoteriaView(viewModels: LoteriaViewModel){
     val lottonNumbers = viewModels.lotoNumbers.value
+    val isLoading by viewModels.isLoading
 
     Column (
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        if (lottonNumbers.isEmpty()){
+        if (lottonNumbers.isEmpty() && !isLoading){
             Text(text = "Loteria",
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold
@@ -39,10 +44,20 @@ fun LoteriaView(viewModels: LoteriaViewModel){
         } else {
             LotteryNumbers(lottonNumbers)
         }
-        Button(onClick = { viewModels.generateLotoNumbers() }) {
-            Text(text = "Generar",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold)
+        Button(onClick = { viewModels.generateLotoNumbers() }, enabled = !isLoading) {
+            if(isLoading){
+                CircularProgressIndicator(
+                    modifier = Modifier.size(25.dp),
+                    color = Color.White,
+                    strokeWidth = 2.dp
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "")
+            } else {
+                Text(text = "Generar",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold)
+            }
         }
 
     }
